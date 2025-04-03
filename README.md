@@ -1,2 +1,2 @@
-# localedge-env-monitor
-[In progress} Real-time environmental monitoring system for Raspberry Pi 
+[![Status](https://img.shields.io/badge/status-in_progress-yellow)]()
+
