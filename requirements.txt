@@ -1,2 +1,8 @@
-pip~=23.2.1
+pip~=25.0
 Jinja2~=3.1.6
+Flask~=3.1.0
+pytest~=8.3.5
+pluggy~=1.5.0
+iniconfig~=2.1.0
+packaging~=24.2
+board~=1.0
