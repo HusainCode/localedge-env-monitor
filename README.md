@@ -15,7 +15,9 @@ Build a reliable, modular, testable IoT system that reads from **DHT22** and **E
 - Real-time dashboard served from Pi
 - JSON-based communication over HTTP
 - SQLite storage and file logger
+- AWS MQTT support for remote sync
 - Modular, test-driven design
+
 
 ---
 
@@ -41,52 +43,57 @@ Build a reliable, modular, testable IoT system that reads from **DHT22** and **E
 - Custom ENS160 MicroPython driver
 
 ### Python (on Pi5)
-- `flask`, `sqlite3`, `logging`, `requests`, `pytest`
+- `flask`, `sqlite3`, `logging`, `requests`, `pytest`, `paho-mqtt`
 - `Adafruit_DHT` (if fallback sensor code on Pi is needed)
+
 ---
 
 ## 🎨 Architecture Diagram (WIP)
 
-![Architecture](https://github.com/user-attachments/assets/3231ec72-a0ef-442a-8971-8e4c4e13a851)
+![image](https://github.com/user-attachments/assets/95a894ba-115a-412a-a9ff-460b289d6355)
 
 ---
 
 ## 🧱 Project Structure
 
 ```bash
+```bash
 localedge-env-monitor/
 ├── app/
+│   ├── aws/
+│   │   ├── __init__.py
+│   │   └── mqtt_client.py        # Publishes to AWS IoT Core
 │   ├── pi/
 │   │   ├── __init__.py
-│   │   └── pi5.py              # Entry point for running the Flask API on Pi5
+│   │   └── pi5.py                # Entry point for Flask API on Pi5
 │   ├── sensors/
 │   │   ├── __init__.py
-│   │   ├── dht22.py            # Threshold-aware DHT22 sensor logic
-│   │   ├── ens160.py           # Threshold-aware ENS160 sensor logic
-│   │   └── sensor_manager.py   # Collects validated data, routes to DB and logger
+│   │   ├── dht22.py              # Threshold-aware DHT22 logic
+│   │   ├── ens160.py             # Threshold-aware ENS160 logic
+│   │   └── sensor_manager.py     # Routes data to storage, logger, cloud
 │   ├── storage/
 │   │   ├── __init__.py
-│   │   └── sqlite_db.py        # SQLite interaction logic
-│   ├── logs/                   # Centralized logging output folder
-│   ├── routes.py               # Flask endpoints to serve dashboard requests
-│   └── __init__.py             # Flask app factory setup
-├── static/                     # Static assets for the dashboard (CSS, JS)
+│   │   └── sqlite_db.py          # SQLite persistence layer
+│   ├── logs/                     # Centralized logging output
+│   ├── routes.py                 # Flask endpoints
+│   └── __init__.py               # App factory init
+├── static/                       # Dashboard static assets
 ├── templates/
-│   └── index.html              # Dashboard UI frontend
+│   └── index.html                # Dashboard frontend
 ├── test/
 │   ├── __init__.py
-│   ├── test_dht22.py           # Unit tests for DHT22 class
-│   ├── test_ens160.py          # Unit tests for ENS160 class
-│   ├── test_sensor_manager.py  # Unit tests for storage, logging logic
-│   ├── test_flask_api.py       # API endpoint behavior and validation
-│   ├── test_logger.py          # Log format, timestamp, file write tests
-│   ├── test_db_storage.py      # Insert/query tests for sqlite_db.py
-│   └── test_pipeline.py        # End-to-end test from sensors to dashboard
-├── README.md                   # You’re here
-├── requirements.txt            # Python dependencies
-├── run.py                      # Run Flask app
-├── sandbox.py                  # Dev scratchpad (experimental/test-only)
-└── .env                        # Environment variables (not committed)
+│   ├── test_dht22.py             # Unit test for DHT22 sensor logic
+│   ├── test_ens160.py            # Unit test for ENS160 sensor logic
+│   ├── test_sensor_manager.py    # Sensor manager logic test
+│   ├── test_flask_api.py         # Flask endpoint + payload format
+│   ├── test_logger.py            # Logger formatting / output
+│   ├── test_db_storage.py        # SQLite write + read verification
+│   └── test_pipeline.py          # E2E integration test
+├── README.md                     # You’re here
+├── requirements.txt              # Dependencies
+├── run.py                        # Main entry for app
+├── sandbox.py                    # Dev/test utils
+└── .env                          # Secret keys + config (not committed)
 ```
 
 ---
@@ -107,16 +114,17 @@ localedge-env-monitor/
 
 ## 🧪 Testing Strategy
 
-| Component           | Test File                | Description                           |
-| ------------------ | ------------------------ | ------------------------------------- |
-| DHT22 Sensor        | `test/test_dht22.py`     | Valid reading logic + thresholds      |
-| ENS160 Sensor       | `test/test_ens160.py`    | CO₂, TVOC thresholds + validation     |
-| Sensor Manager      | `test_sensor_manager.py` | DB insert, logging, fault isolation   |
-| Flask API           | `test_flask_api.py`      | Health checks + endpoint integration  |
-| End-to-End Pipeline | `test_pipeline.py`       | Full flow from sensors to dashboard   |
-| SQLite Storage      | Inline in sensor_manager | Storage confirmation + exception test |
-| Logger Output       | Inline or separate test  | Log file format, timestamp check      |
+## 🧪 Testing Strategy
 
+| Component           | Test File                  | Description                                  |
+| ------------------ | -------------------------- | -------------------------------------------- |
+| DHT22 Sensor        | `test/test_dht22.py`        | Unit test for temperature & humidity readings |
+| ENS160 Sensor       | `test/test_ens160.py`       | Unit test for AQI, TVOC, and CO₂ thresholds   |
+| Sensor Manager      | `test/test_sensor_manager.py` | Validates routing, AWS, and local logging     |
+| Flask API           | `test/test_flask_api.py`    | Tests `/data` POST and dashboard GET routes  |
+| Logger System       | `test/test_logger.py`       | Verifies log entries, format, and rotation   |
+| SQLite Storage      | `test/test_db_storage.py`   | CRUD tests on sensor DB storage layer        |
+| End-to-End Pipeline | `test/test_pipeline.py`     | Simulates PicoW → API → SQLite → Dashboard   |
 ---
 
 ## 🚀 Getting Started
