@@ -48,7 +48,7 @@ Build a reliable, modular, testable IoT system that reads from **DHT22** and **E
 
 ---
 
-## 🎨 Architecture Diagram (WIP)
+## 🎨 Architecture Diagram
 
 ![image](https://github.com/user-attachments/assets/95a894ba-115a-412a-a9ff-460b289d6355)
 
