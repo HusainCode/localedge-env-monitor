@@ -1,6 +1,6 @@
 [![Status](https://img.shields.io/badge/status-in_progress-yellow)]()
 
-# 📱 LocalEdge Env Monitor
+# LocalEdge Env Monitor
 
 📅 **GOAL**  
 Build a reliable, modular, testable IoT system that reads from **DHT22** and **ENS160** sensors on a **Pico W (MicroPython)** and delivers environmental data to a **Flask API running on a Raspberry Pi 5**. Data is then served to a **Dashboard UI**.
