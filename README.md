@@ -57,7 +57,6 @@ Build a reliable, modular, testable IoT system that reads from **DHT22** and **E
 ## 🧱 Project Structure
 
 ```bash
-```bash
 localedge-env-monitor/
 ├── app/
 │   ├── aws/
