@@ -43,8 +43,6 @@ Build a reliable, modular, testable IoT system that reads from **DHT22** and **E
 ### Python (on Pi5)
 - `flask`, `sqlite3`, `logging`, `requests`, `pytest`
 - `Adafruit_DHT` (if fallback sensor code on Pi is needed)
-
----
 ---
 
 ## 🎨 Architecture Diagram (WIP)
@@ -66,6 +64,10 @@ localedge-env-monitor/
 │   │   ├── dht22.py            # Threshold-aware DHT22 sensor logic
 │   │   ├── ens160.py           # Threshold-aware ENS160 sensor logic
 │   │   └── sensor_manager.py   # Collects validated data, routes to DB and logger
+│   ├── storage/
+│   │   ├── __init__.py
+│   │   └── sqlite_db.py        # SQLite interaction logic
+│   ├── logs/                   # Centralized logging output folder
 │   ├── routes.py               # Flask endpoints to serve dashboard requests
 │   └── __init__.py             # Flask app factory setup
 ├── static/                     # Static assets for the dashboard (CSS, JS)
@@ -77,6 +79,8 @@ localedge-env-monitor/
 │   ├── test_ens160.py          # Unit tests for ENS160 class
 │   ├── test_sensor_manager.py  # Unit tests for storage, logging logic
 │   ├── test_flask_api.py       # API endpoint behavior and validation
+│   ├── test_logger.py          # Log format, timestamp, file write tests
+│   ├── test_db_storage.py      # Insert/query tests for sqlite_db.py
 │   └── test_pipeline.py        # End-to-end test from sensors to dashboard
 ├── README.md                   # You’re here
 ├── requirements.txt            # Python dependencies
