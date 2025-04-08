@@ -1,10 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+  <meta charset="UTF-8" />
+  <title>Retro Dashbirds</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
+  <div class="dashboards">
+    <div class="window">
+      <div class="title-bar">Dashbird 1</div>
+      <div class="content">
+        <div class="status">
+          <div class="indicator on"></div>
+          <span class="label">Status:</span> ON
+        </div>
+        <div>
+          <span class="label">Last Data:</span>
+          <span class="timestamp">2025-04-08 13:45:23</span>
+        </div>
+      </div>
+    </div>
 
+    <div class="window">
+      <div class="title-bar">Dashbird 2</div>
+      <div class="content">
+        <div class="status">
+          <div class="indicator off"></div>
+          <span class="label">Status:</span> OFF
+        </div>
+        <div>
+          <span class="label">Last Data:</span>
+          <span class="timestamp">2025-04-08 12:12:58</span>
+        </div>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
