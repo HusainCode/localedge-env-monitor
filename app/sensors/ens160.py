@@ -1,4 +1,15 @@
 
+#  Purpose:
+#
+#
+#  Key Attributes:
+#
+#
+#  Main Methods:
+#
+#
+#  Example:
+
 # ENS160 Air Quality Sensor Features:
 # - eCO2: Equivalent CO₂ level estimation (in ppm), useful for indoor air quality
 # - TVOC: Total Volatile Organic Compounds (in ppb), indicates chemical pollutants
@@ -12,7 +23,7 @@ ADC	Read analog signals (e.g., from potentiometers, light sensors)
 PWM	Create pulse-width signals (for dimming LEDs, driving servos, etc.)
 '''
 
-from machine  import I2C
+# from machine  import I2C
 import time
 import ujson # lighhtwegiht json
 import gc # Garbage collection

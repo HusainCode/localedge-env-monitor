@@ -1,3 +1,14 @@
+#  Purpose:
+#
+#
+#  Key Attributes:
+#
+#
+#  Main Methods:
+#
+#
+#  Example:
+
 # DHT22 Environmental Features (for dashboard):
 # - Temperature: Shows how hot or cold the air is (in °C)
 # - Humidity: Shows how much moisture is in the air (in %)

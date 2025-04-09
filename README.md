@@ -73,7 +73,7 @@ localedge-env-monitor/
 │   ├── storage/
 │   │   ├── __init__.py
 │   │   └── sqlite_db.py          # SQLite persistence layer
-│   ├── logs/                     # Centralized logging output
+│   ├── app_logging/                     # Centralized app_logging output
 │   ├── routes.py                 # Flask endpoints
 │   └── __init__.py               # App factory init
 ├── static/                       # Dashboard static assets
