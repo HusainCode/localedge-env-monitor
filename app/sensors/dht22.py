@@ -16,6 +16,8 @@
 
 import os
 # import adafruit_dht
+# import Adafruit_DHT
+
 import board
 import time
 

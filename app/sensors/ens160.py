@@ -23,14 +23,27 @@ ADC	Read analog signals (e.g., from potentiometers, light sensors)
 PWM	Create pulse-width signals (for dimming LEDs, driving servos, etc.)
 '''
 
-# from machine  import I2C
+"""
+     Sources: 
+           - https://github.com/sparkfun/qwiic_ens160_py
+           - https://docs.sparkfun.com/qwiic_ens160_py/classqwiic__ens160_1_1_qwiic_e_n_s160.html#a3aae69c3519a68f347308d4514a2b2a7
+           
+"""
+
+# from machine import I2C
 import time
 import ujson # lighhtwegiht json
 import gc # Garbage collection
+import sys
+import qwiic_ens160
 
 
 class ENS160:
     def __init__(self):
+
+        self.__ENS160 = qwiic_ens160.QwiicENS160()
+        self.ON = True
+        self.OFF = False
         self.air_quality = None
         '''
         eCO₂ (Equivalent Carbon Dioxide) Levels in ppm:
@@ -51,6 +64,11 @@ class ENS160:
         Lower is better. Aim for under 150 ppb indoors.
         '''
         self.total_TVOC = 0
+
+    @property
+    def is_connected(self):
+        if self.__ENS160.is_connected() == self.OFF:
+            print(f"The device isn't connected to the system.", file=sys.stderr)
 
     @property
     def air_quality(self):
