@@ -113,8 +113,6 @@ localedge-env-monitor/
 
 ## 🧪 Testing Strategy
 
-## 🧪 Testing Strategy
-
 | Component           | Test File                  | Description                                  |
 | ------------------ | -------------------------- | -------------------------------------------- |
 | DHT22 Sensor        | `test/test_dht22.py`        | Unit test for temperature & humidity readings |
