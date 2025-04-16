@@ -13,17 +13,25 @@
 # - Temperature: Shows how hot or cold the air is (in °C)
 # - Humidity: Shows how much moisture is in the air (in %)
 
+# Sources:
+#        - https://randomnerdtutorials.com/esp32-esp8266-dht11-dht22-micropython-temperature-humidity-sensor/
+
+
+import adafruit_dht
+# import Adafruit_DHT # this libray will be used for now. When deployed will uses -> import dht
+
 
 import os
-# import adafruit_dht
-# import Adafruit_DHT
-
+# from machine import Pin
 import board
-import time
+from time import time, sleep
 
 
 class MockDHT:
     def __init__(self):
+
+        self.sensor = dht.DHT22(Pin())
+
         # fahrenheit = (Celsius * 9/5) + 32
         # Temperature
         # Range: -40°C to +80°C

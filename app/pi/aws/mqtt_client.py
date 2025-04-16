@@ -1,3 +1,14 @@
+#  Purpose:
+#
+#
+#  Key Attributes:
+#
+#
+#  Main Methods:
+#
+#
+#  Example:
+
 """
 Sources:
    - https://docs.aws.amazon.com/iot/latest/developerguide/mqtt.html
