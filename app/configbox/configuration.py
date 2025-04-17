@@ -14,8 +14,6 @@
 #      - get(attr: str): Fetches a specific configuration value
 #
 
-
-
 """
    Sources:
        - https://docs.python.org/3/library/os.html
