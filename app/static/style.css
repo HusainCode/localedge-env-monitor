@@ -1,70 +1,83 @@
 body {
-  background-color: #c0c0c0;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  margin: 20px;
-}
-
-.window {
-  width: 300px;
-  background-color: #dfdfdf;
-  border: 2px solid #fff;
-  border-right-color: #404040;
-  border-bottom-color: #404040;
-  box-shadow: inset -1px -1px 0 #808080, inset 1px 1px 0 #fff;
+  background: #c0c0c0;
+  margin: 0;
   padding: 10px;
-  margin-bottom: 20px;
+  color: black;
 }
 
-.title-bar {
-  background: linear-gradient(to right, #000080, #0000a0);
+.dashboard {
+  background: #ffffff;
+  border: 2px solid #808080;
+  padding: 10px;
+  box-shadow: inset -2px -2px 0 #fff, inset 2px 2px 0 #000;
+}
+
+.gauges {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.gauge {
+  flex: 1;
+  background: #dfdfdf;
+  border: 2px solid #808080;
+  box-shadow: inset -2px -2px 0 #fff, inset 2px 2px 0 #000;
+  text-align: center;
+  padding: 1rem;
+}
+
+.gauge-box {
+  margin-top: 0.5rem;
+  padding: 1rem;
+  background: #ffffff;
+  border: 2px solid #808080;
+  box-shadow: inset -2px -2px 0 #fff, inset 2px 2px 0 #000;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.table-box {
+  background: #dfdfdf;
+  padding: 1rem;
+  border: 2px solid #808080;
+  box-shadow: inset -2px -2px 0 #fff, inset 2px 2px 0 #000;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  margin-top: 1rem;
+  font-size: 0.95rem;
+}
+
+th {
+  background: #000080;
   color: white;
-  padding: 4px 8px;
-  font-weight: bold;
-  font-size: 14px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 2px solid #808080;
+  padding: 6px;
+  border: 2px outset #c0c0c0;
+  text-align: center;
 }
 
-.content {
-  padding: 10px;
-  font-size: 14px;
+td {
+  padding: 6px;
+  text-align: center;
+  border: 1px solid #808080;
 }
 
-.status {
-  display: flex;
-  align-items: center;
-  margin-bottom: 8px;
+.footer {
+  margin-top: 1rem;
+  text-align: right;
+  font-size: 0.8rem;
+  color: black;
 }
 
-.indicator {
-  width: 12px;
-  height: 12px;
-  border: 1px solid #000;
-  margin-right: 8px;
+.blue {
+  color: #000080;
 }
 
-.on {
-  background-color: #00ff00;
-}
-
-.off {
-  background-color: #ff0000;
-}
-
-.label {
-  font-weight: bold;
-}
-
-.timestamp {
-  font-family: monospace;
-  background-color: #fff;
-  padding: 4px;
-  border: 1px inset #808080;
-}
-
-.dashboards {
-  display: flex;
-  gap: 20px;
+.red {
+  color: #800000;
 }
