@@ -24,24 +24,28 @@ class SqliteDB:
             raise ValueError("Database path must be specified.")
         self.db_path = db_path
 
-    def __connect(self):
+    # Creat local connection mapped to db_path file
+    def __connect(self) -> sqlite3.Connection:
         return sqlite3.connect(self.db_path)
 
-    def execute(self, query, params=None):
+    # execute a write query INSERT,UPDATE,DELETE
+    def execute(self, query: str, params: tuple | None = None) -> None:
         params = params or ()
+        # handle closing and opening automatically
         with self.__connect() as conn:
             cursor = conn.cursor()
             cursor.execute(query, params)
-            conn.commit()
+            conn.commit() # persist changes
 
-    def fetchall(self, query, params=None):
-        params = params or ()
-        with self.__connect() as conn:
+    def fetchall(self, query: str, params: tuple | None = None) -> list[tuple]:
+        params = params or () # to ensure always something iterable to avoid TypeError
+                              # This is equivalent to params () if params is None
+        with self.__connect() as conn: # open connection using __connect()
             cursor = conn.cursor()
             cursor.execute(query, params)
             return cursor.fetchall()
 
-    def fetchone(self, query, params=None):
+    def fetchone(self, query: str, params: tuple | None = None) -> tuple | None:
         params = params or ()
         with self.__connect() as conn:
             cursor = conn.cursor()
