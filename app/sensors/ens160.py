@@ -1,4 +1,3 @@
-
 #  Purpose:
 #
 #
@@ -27,20 +26,19 @@ PWM	Create pulse-width signals (for dimming LEDs, driving servos, etc.)
      Sources: 
            - https://github.com/sparkfun/qwiic_ens160_py
            - https://docs.sparkfun.com/qwiic_ens160_py/classqwiic__ens160_1_1_qwiic_e_n_s160.html#a3aae69c3519a68f347308d4514a2b2a7
-           
+
 """
 
 # from machine import I2C
 import time
-import ujson # lighhtwegiht json
-import gc # Garbage collection
+import ujson  # lighhtwegiht json
+import gc  # Garbage collection
 import sys
 import qwiic_ens160
 
 
 class ENS160:
     def __init__(self):
-
         self.__ENS160 = qwiic_ens160.QwiicENS160()
         self.ON = True
         self.OFF = False

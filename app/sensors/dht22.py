@@ -27,7 +27,7 @@ import board
 from time import time, sleep
 
 
-class MockDHT:
+class DHT22:
     def __init__(self):
 
         self.sensor = dht.DHT22(Pin())
