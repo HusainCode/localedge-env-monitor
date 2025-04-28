@@ -43,6 +43,7 @@ class ENS160:
         self.ON = True
         self.OFF = False
         self.air_quality = None
+        self.sensor_status = False # False is OFF, True is ON
         '''
         eCO₂ (Equivalent Carbon Dioxide) Levels in ppm:
         - 400–1000 ppm     → Good (typical fresh indoor air)
@@ -95,3 +96,4 @@ class ENS160:
 
     def max_min_history(self):
         pass
+

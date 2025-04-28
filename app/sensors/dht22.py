@@ -47,15 +47,11 @@ class DHT22:
         self.humidity = 33
         self.average_reading = None
         self.sensor_status = False # False is OFF, True is ON
+        self.min_max_temperature = 0
+        self.max_min_history = []
 
     # Check to see if the sensor is reading data
     def sensor_status(self):
-        pass
-
-    def thresholds(self):
-        # Normal
-        # Warning
-        # Critical
         pass
 
     def data_timestamp(self):
@@ -82,5 +78,4 @@ class DHT22:
 dhtDevice = MockDHT()
 
 print("Hello World")
-# I STOPPED HERE
-# DESIGN THE ARCHITECTURE
+
