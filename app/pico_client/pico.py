@@ -24,8 +24,6 @@ Sources:
 
 import time
 
-from pico_client.pico import Pico
-
 
 class WifiConnectionError(Exception): pass
 
@@ -44,13 +42,13 @@ class WifiManger:
     timeout = 10
 
     def __init__(self):
-        self.wlan = network.Wlan(network.STA_IF)  # create wifi connection with station mode
-        self.wlan_is_active = wlan.active(WifiManger.UP)
+        self.wlan = network.Wlan(network.STA_IF)  # create Wi-Fi connection with station mode
+        self.wlan_is_active = self.wlan.active(WifiManger.UP)
 
     def connect_wifi(self) -> None:
         try:
             self.wlan.connect(WifiManger.wifi_ssid, WifiManger.wifi_password)
-            while not self.wlan.isconnected() and timeout > 0:
+            while not self.wlan.isconnected() and WifiManger.timeout > 0:
                 time.sleep(1)
                 WifiManger.timeout -= 1
             if not self.wlan.isconnected():
@@ -73,37 +71,36 @@ class Pico:
 
     headers = {
         "Content-Type": "text/plain",
-        "Authorization": f"Bearer {Pico.api_key}"
+        "Authorization": f"Bearer {api_key}"
     }
 
+    def __init__(self) -> None:
+        self.dht22 = DHT22()
+        self.ens160 = ENS160()
 
-def __init__(self) -> None:
-    self.dht22 = DHT22()
-    self.ens160 = ENS160()
+        self.temperature = round(self.dht22.temperature, 2)
+        self.humidity = round(self.dht22.humidity, 2)
+        self.co2 = round(self.ens160.co2, 2)
 
-    self.temperature = round(self.dht22.temperature, 2)
-    self.humidity = round(self.dht23.humidity, 2)
-    self.co2 = round(self.ens160.co2, 2)
+        """
+        # HTTP Status Codes:
+         - 200 OK          
+         - 201 Created     
+         - 202 Accepted    
+         - 204 No Content  
 
-    """
-    # HTTP Status Codes:
-     - 200 OK          
-     - 201 Created     
-     - 202 Accepted    
-     - 204 No Content  
+         - 400 Bad Request 
+         - 401 Unauthorized 
+         - 403 Forbidden    
+         - 404 Not Found   
+         - 405 Method Not Allowed 
 
-     - 400 Bad Request 
-     - 401 Unauthorized 
-     - 403 Forbidden    
-     - 404 Not Found   
-     - 405 Method Not Allowed 
-
-     - 500 Internal Server Error 
-     - 502 Bad Gateway  
-     - 503 Service Unavailable 
-     - 504 Gateway Timeout -
-    """
-    self.https_status = {200: "Request succeeded, data received or sent successfully",
+         - 500 Internal Server Error 
+         - 502 Bad Gateway  
+         - 503 Service Unavailable 
+         - 504 Gateway Timeout -
+        """
+        self.https_status = {200: "Request succeeded, data received or sent successfully",
                          201: "New resource created (used after POST success)",
                          202: "Request accepted for processing, but not completed",
                          204: "No Content  --> Request succeeded, but no data returned",
@@ -117,52 +114,37 @@ def __init__(self) -> None:
                          503: "Server overloaded or down",
                          504: "Server didn't respond in time"}
 
+    def send_request(self, server_url: str, headers: dict, data: dict) -> str:
+        response = urequests.post(server_url, headers=headers, data=ujson.dumps(data))
+        status = response.status_code
 
-def send_request(self, server_url: str, headers: dict, data: dict) -> str:
-    response = urequests.post(server_url, headers=headers, data=ujson.dumps(data))
-    status = response.status_code
+        try:
+            if status in self.https_status:
+                print(f"Https:{status}: self.https_status[status]}")
+            else:
+                print(f"Unkown status {status}")
 
-    try:
-        if status in self.https_status:
-            print(f"Https:{status}: self.https_status[status]")
-        else:
-            print(f"Unkown status {status}")
-        response_raw_data = response.text
-        response.close()
-        return response_raw_data
-    except PicoError as e:
-        raise PicoError(f"Error occure while sending POST request:{e}")
+            response_raw_data = response.text
+            response.close()
+            return response_raw_data
 
+        except PicoError as e:
+            raise PicoError(f"Error occurred while sending POST request:{e}")
 
-def send_dht22_data(self) -> None:
-    # ADD MORE DATA
-    payload = f"{self.dht22.temperature},{self.dht22.humidity},{self.dht22.average_reading},{self.dht22.sensor_status}"
+    def send_dht22_data(self) -> None:
+        # ADD MORE DATA
+        payload = f"{self.dht22.temperature},{self.dht22.humidity},{self.dht22.average_reading},{self.dht22.sensor_status}"
 
-    try:
-        self.send_request(Pico.server_url, headers=Pico.headers, data=payload)
-    except PicoError as e:
-        raise PicoError("Falied to send DHT22 data to server")
+        try:
+            self.send_request(Pico.server_url, headers=Pico.headers, data=payload)
+        except PicoError as e:
+            raise PicoError("Falied to send DHT22 data to server")
 
+    def send_ens160_data(self):
+      # ADD MORE DATA
+      payload = f"{self.ens160.eCO2_level}, {self.ens160.total_TVOC},{self.ens160.air_quality},{self.ens160.sensor_status}"
 
-def send_ens160_data(self):
-    # ADD MORE DATA
-    payload = f"{self.ens160.eCO2_level}, {self.ens160.total_TVOC},{self.ens160.air_quality},{self.ens160.sensor_status}"
-
-    try:
-        self.send_request(Pico.server_url, headers=Pico.headers, data=payload)
-    except PicoError as e:
-        raise PicoError(f"Failed to send ENS160 data to server")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+      try:
+          self.send_request(Pico.server_url, headers=Pico.headers, data=payload)
+      except PicoError as e:
+         raise PicoError(f"Failed to send ENS160 data to server")

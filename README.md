@@ -62,10 +62,10 @@ localedge-env-monitor/
 │   ├── aws/
 │   │   ├── __init__.py
 │   │   └── mqtt_client.py        # Publishes to AWS IoT Core
-│   ├── pi/
+│   ├── pico_client/
 │   │   ├── __init__.py
 │   │   └── pi5.py                # Entry point for Flask API on Pi5
-│   ├── sensors/
+│   ├── sensor_manager/
 │   │   ├── __init__.py
 │   │   ├── dht22.py              # Threshold-aware DHT22 logic
 │   │   ├── ens160.py             # Threshold-aware ENS160 logic

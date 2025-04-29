@@ -21,10 +21,19 @@ Flask Blueprint for sensor-related API routes.
 """
 
 
-from flask import Blueprint
+from flask import Blueprint, request, jsonify
+from sensor_manager.sensor_pipeline import SensorPipeline
 
 main = Blueprint("main", __name__)
 
 @main.route("/")
 def home():
     return "LocalEdge is up and running!"
+
+routes = Blueprint("routes", __name__)
+
+sensor_pipeline = SensorPipeline(api_key ="124", server_url="https://localhost")
+
+@routes.route('dht22', methods=['POST'])
+def recevice_dht22():
+    # I STOPPED HERE

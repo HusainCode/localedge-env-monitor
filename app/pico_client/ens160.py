@@ -17,8 +17,8 @@
 
 '''
 in	Control digital I/O pins (e.g., turn LEDs on/off, read buttons)
-I2C	Communicate with I²C devices like sensors (ENS160, LCDs, etc.)
-ADC	Read analog signals (e.g., from potentiometers, light sensors)
+I2C	Communicate with I²C devices like sensor_manager (ENS160, LCDs, etc.)
+ADC	Read analog signals (e.g., from potentiometers, light sensor_manager)
 PWM	Create pulse-width signals (for dimming LEDs, driving servos, etc.)
 '''
 
