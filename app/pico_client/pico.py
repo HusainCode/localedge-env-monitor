@@ -103,7 +103,7 @@ class Pico:
         self.https_status = {200: "Request succeeded, data received or sent successfully",
                          201: "New resource created (used after POST success)",
                          202: "Request accepted for processing, but not completed",
-                         204: "No Content  --> Request succeeded, but no data returned",
+                         204: "No Content. Request succeeded, but no data returned",
                          400: "Client sent invalid data",
                          401: "Authentication required (wrong/missing API key)",
                          403: "You are not allowed to access this resource",
