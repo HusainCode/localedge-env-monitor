@@ -66,53 +66,64 @@ from ens160 import ENS160
 
 
 class Pico:
-    api_key = None
-    server_url = None
+    _instance = None
 
-    headers = {
-        "Content-Type": "text/plain",
-        "Authorization": f"Bearer {api_key}"
-    }
+    def __new__(cls, *args, **kwargs):
+        if cls._instance is None:
+            cls._instance = super(Pico, cls).__new__(cls)
+        return cls._instance
 
-    def __init__(self) -> None:
-        self.dht22 = DHT22()
-        self.ens160 = ENS160()
+    def __init__(self, api_key=None, server_url=None):
+        if not hasattr(self, 'initialized'):
+            self.api_key = api_key
+            self.server_url = server_url
 
-        self.temperature = round(self.dht22.temperature, 2)
-        self.humidity = round(self.dht22.humidity, 2)
-        self.co2 = round(self.ens160.co2, 2)
+            self.headers = {
+                "Content-Type": "text/plain",
+                "Authorization": f"Bearer {self.api_key}"
+            }
 
-        """
-        # HTTP Status Codes:
-         - 200 OK          
-         - 201 Created     
-         - 202 Accepted    
-         - 204 No Content  
+            """
+                    # HTTP Status Codes:
+                     - 200 OK          
+                     - 201 Created     
+                     - 202 Accepted    
+                     - 204 No Content  
 
-         - 400 Bad Request 
-         - 401 Unauthorized 
-         - 403 Forbidden    
-         - 404 Not Found   
-         - 405 Method Not Allowed 
+                     - 400 Bad Request 
+                     - 401 Unauthorized 
+                     - 403 Forbidden    
+                     - 404 Not Found   
+                     - 405 Method Not Allowed 
 
-         - 500 Internal Server Error 
-         - 502 Bad Gateway  
-         - 503 Service Unavailable 
-         - 504 Gateway Timeout -
-        """
-        self.https_status = {200: "Request succeeded, data received or sent successfully",
-                         201: "New resource created (used after POST success)",
-                         202: "Request accepted for processing, but not completed",
-                         204: "No Content. Request succeeded, but no data returned",
-                         400: "Client sent invalid data",
-                         401: "Authentication required (wrong/missing API key)",
-                         403: "You are not allowed to access this resource",
-                         404: "URL or endpoint does not exist",
-                         405: "Used wrong HTTP method (e.g., POST to GET endpoint)",
-                         500: "Problem on server side",
-                         502: "Server acting as gateway received bad response",
-                         503: "Server overloaded or down",
-                         504: "Server didn't respond in time"}
+                     - 500 Internal Server Error 
+                     - 502 Bad Gateway  
+                     - 503 Service Unavailable 
+                     - 504 Gateway Timeout -
+                    """
+            self.https_status = {200: "Request succeeded, data received or sent successfully",
+                                 201: "New resource created (used after POST success)",
+                                 202: "Request accepted for processing, but not completed",
+                                 204: "No Content. Request succeeded, but no data returned",
+                                 400: "Client sent invalid data",
+                                 401: "Authentication required (wrong/missing API key)",
+                                 403: "You are not allowed to access this resource",
+                                 404: "URL or endpoint does not exist",
+                                 405: "Used wrong HTTP method (e.g., POST to GET endpoint)",
+                                 500: "Problem on server side",
+                                 502: "Server acting as gateway received bad response",
+                                 503: "Server overloaded or down",
+                                 504: "Server didn't respond in time"}
+
+            self.dht22 = DHT22()
+            self.ens160 = ENS160()
+
+            self.temperature = round(self.dht22.temperature, 2)
+            self.humidity = round(self.dht22.humidity, 2)
+            self.co2 = round(self.ens160.co2, 2)
+
+            self.initialized = True
+
 
     def send_request(self, server_url: str, headers: dict, data: dict) -> str:
         response = urequests.post(server_url, headers=headers, data=ujson.dumps(data))
@@ -122,7 +133,7 @@ class Pico:
             if status in self.https_status:
                 print(f"Https:{status}: self.https_status[status]}")
             else:
-                print(f"Unkown status {status}")
+                print(f"Unknown status {status}")
 
             response_raw_data = response.text
             response.close()

@@ -12,8 +12,8 @@
 #   - Sends responses as JSON or renders HTML via Jinja2 templates
 
 # Main Methods:
-#   - GET /sensor/dht22   → Fetch latest DHT22 readings
-#   - GET /sensor/ens160  → Fetch latest ENS160 readings
+#   - GET /sensor/dht22 → Fetch latest DHT22 readings
+#   - GET /sensor/ens160 → Fetch latest ENS160 readings
 
 
 """
@@ -21,10 +21,11 @@ Flask Blueprint for sensor-related API routes.
 """
 
 
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, Response
 from sensor_manager.sensor_pipeline import SensorPipeline
 
 main = Blueprint("main", __name__)
+
 
 @main.route("/")
 def home():
@@ -32,8 +33,19 @@ def home():
 
 routes = Blueprint("routes", __name__)
 
-sensor_pipeline = SensorPipeline(api_key ="124", server_url="https://localhost")
+pipeline = SensorPipeline(api_key ="124", server_url="https://localhost")
 
-@routes.route('dht22', methods=['POST'])
-def recevice_dht22():
-    # I STOPPED HERE
+
+@routes.route("/dht22", methods=["POST"])
+def receive_dht22() -> Response:
+    raw = request.get_data(as_text=True) # tell Flask the coming data is a text
+    data = pipeline.update_dht22_data(raw)
+    return jsonify(data)
+
+@routes.route("/ens160", methods=["POST"])
+def receive_ens160() -> Response:
+    raw = request.get_data(as_text=True)
+    data =pipeline.update_ens160_data(raw)
+    return jsonify(data)
+
+
