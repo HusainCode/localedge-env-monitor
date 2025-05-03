@@ -23,16 +23,17 @@ Sources:
 """
 
 import time
-
+import network
+import dht
+import requests
+# from machine import Pin
+import urequests
+import ujson
+from dht22 import DHT22
+from ens160 import ENS160
 
 class WifiConnectionError(Exception): pass
-
-
 class PicoError(Exception): pass
-
-
-import network
-
 
 class WifiManger:
     UP = True
@@ -55,14 +56,6 @@ class WifiManger:
                 raise WifiConnectionError(f"Failed to connect to WiFi after timeout of {WifiManger.timeout} seconds")
         except Exception as e:
             raise WifiConnectionError(f"Failed to connect to WiFi!{e}")
-
-
-import dht
-from machine import Pin
-import urequests
-import ujson
-from dht22 import DHT22
-from ens160 import ENS160
 
 
 class Pico:
@@ -125,13 +118,32 @@ class Pico:
             self.initialized = True
 
 
+    def safe_post_with_retry(self, url: str, headers: dict, data: dict,
+                      timeout: int =5, retries:int =3,backoff:float = 2.0):
+
+        for attempt in range(retries):
+         try:
+             response = requests.post(url, headers=headers, data=ujson.dumps(data))
+             if response.status_code >= 500:
+                 raise Exception(f"Server error: {response.status_code}")
+             return response
+         except Exception as e:
+             if attempt == retries - 1:
+                 raise PicoError(f"POST failed after {retries} retries") from e
+             wait = backoff ** attempt
+             print(f"[Retry {attempt+1} Error {e} - waiting {wait}s before retry...")
+             time.sleep(wait)
+
+
+
+     # STOPPED HERE, MERGE WITH SAFE
     def send_request(self, server_url: str, headers: dict, data: dict) -> str:
         response = urequests.post(server_url, headers=headers, data=ujson.dumps(data))
         status = response.status_code
 
         try:
             if status in self.https_status:
-                print(f"Https:{status}: self.https_status[status]}")
+                print(f"Https:{status}: self.https_status[status]")
             else:
                 print(f"Unknown status {status}")
 
