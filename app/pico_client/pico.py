@@ -57,6 +57,9 @@ class WifiManger:
         except Exception as e:
             raise WifiConnectionError(f"Failed to connect to WiFi!{e}")
 
+class NetworkClient:
+    def __init__(self):
+        pass # I STOPPED HERE
 
 class Pico:
     _instance = None
@@ -117,26 +120,31 @@ class Pico:
 
             self.initialized = True
 
-
     def safe_post_with_retry(self, url: str, headers: dict, data: dict,
-                      timeout: int =5, retries:int =3,backoff:float = 2.0):
+                             timeout: int = 5, retries: int = 3, backoff: float = 2.0):
 
         for attempt in range(retries):
-         try:
-             response = requests.post(url, headers=headers, data=ujson.dumps(data))
-             if response.status_code >= 500:
-                 raise Exception(f"Server error: {response.status_code}")
-             return response
-         except Exception as e:
-             if attempt == retries - 1:
-                 raise PicoError(f"POST failed after {retries} retries") from e
-             wait = backoff ** attempt
-             print(f"[Retry {attempt+1} Error {e} - waiting {wait}s before retry...")
-             time.sleep(wait)
+            try:
+                response = requests.post(url, headers=headers, data=ujson.dumps(data))
+                status = response.status_code
+
+                if status not in self.https_status:
+                    raise PicoError(f"Error, wrong status: {status}")
+
+                response_raw_data = response.text
+                response.close()
+                return response_raw_data
+
+            except Exception as e:
+                if attempt == retries - 1:
+                    raise PicoError(f"POST failed after {retries} retries") from e
+                wait = backoff ** attempt
+                print(f"[Retry {attempt + 1} Error {e} - waiting {wait}s before retry...")
+                time.sleep(wait)
 
 
 
-     # STOPPED HERE, MERGE WITH SAFE
+     # i ALREADY started MERGE WITH SAFE
     def send_request(self, server_url: str, headers: dict, data: dict) -> str:
         response = urequests.post(server_url, headers=headers, data=ujson.dumps(data))
         status = response.status_code
