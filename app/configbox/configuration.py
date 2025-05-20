@@ -24,5 +24,26 @@ from dotenv import load_dotenv
 import sys
 
 class Configuration:
-    def __init__(self):
-        print("Hello World!")
+    def __init__(self, env_path=".env"):
+        self.env_path = env_path
+        self._loaded = False
+        self.load()
+
+    def load(self):
+        """
+        Loads environment variables from a .env file or system environment.
+        """
+        load_dotenv(dotenv_path=self.env_path)
+        self.AWS_ENDPOINT = os.getenv("AWS_ENDPOINT")
+        self.PI_API_URL = os.getenv("PI_API_URL")
+        self.SECRET_KEY = os.getenv("SECRET_KEY")
+        self.DB_PATH = os.getenv("DB_PATH")
+        self._loaded = True
+
+    def get(self, attr: str):
+        """
+        Fetch a specific configuration value using attribute name.
+        """
+        if not self._loaded:
+            raise RuntimeError("Environment variables not loaded.")
+        return getattr(self, attr, None)
