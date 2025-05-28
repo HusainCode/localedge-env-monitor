@@ -73,13 +73,19 @@ class MqttClient:
                             tls_version=ssl.PROTOCOL_TLSv1_2)
 
     def connect(self):
-        self.client.connect(self.endpoint, self.port)
-        self.client.loop_start()
-        print("Connected to AWS IoT")
+        try:
+            self.client.connect(self.endpoint, self.port)
+            self.client.loop_start()
+            print("Connected to AWS IoT")
+        except Exception as e:
+            print(f"[MQTT ERROR] Failed to connect: {e}")
 
     def publish(self, message):
-        self.client.publish(self.topic, message)
-        print(f"Published: {message}")
+        try:
+            self.client.publish(self.topic, message)
+            print(f"Published: {message}")
+        except Exception as e:
+            print(f"[MQTT ERROR] Failed to publish: {e}")
 
     def disconnect(self):
         self.client.loop_stop()
