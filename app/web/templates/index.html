@@ -4,33 +4,95 @@
   <meta charset="UTF-8" />
   <title>Retro Dashbirds</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <style>
+    body {
+      background-color: #1c1c1c;
+      font-family: 'Courier New', Courier, monospace;
+      color: #f0f0f0;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 2rem;
+    }
+    .dashboards {
+      display: flex;
+      gap: 2rem;
+    }
+    .window {
+      background-color: #2e2e2e;
+      border: 2px solid #555;
+      border-radius: 8px;
+      width: 300px;
+      padding: 1rem;
+      box-shadow: 4px 4px 0 #000;
+    }
+    .title-bar {
+      background-color: #444;
+      color: #fff;
+      font-weight: bold;
+      padding: 0.5rem;
+      border-bottom: 2px solid #666;
+      margin-bottom: 1rem;
+    }
+    .status {
+      display: flex;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    .indicator {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin-right: 0.5rem;
+    }
+    .on {
+      background-color: #00ff00;
+    }
+    .off {
+      background-color: #ff0000;
+    }
+    .label {
+      font-weight: bold;
+    }
+    .timestamp, .value {
+      font-family: monospace;
+    }
+  </style>
 </head>
 <body>
   <div class="dashboards">
     <div class="window">
-      <div class="title-bar">Dashbird 1</div>
+      <div class="title-bar">Temperature</div>
       <div class="content">
         <div class="status">
           <div class="indicator on"></div>
           <span class="label">Status:</span> ON
         </div>
         <div>
+          <span class="label">Value:</span>
+          <span class="value">{{ temperature }} °C</span>
+        </div>
+        <div>
           <span class="label">Last Data:</span>
-          <span class="timestamp">2025-04-08 13:45:23</span>
+          <span class="timestamp">{{ timestamp }}</span>
         </div>
       </div>
     </div>
 
     <div class="window">
-      <div class="title-bar">Dashbird 2</div>
+      <div class="title-bar">Humidity</div>
       <div class="content">
         <div class="status">
-          <div class="indicator off"></div>
-          <span class="label">Status:</span> OFF
+          <div class="indicator on"></div>
+          <span class="label">Status:</span> ON
+        </div>
+        <div>
+          <span class="label">Value:</span>
+          <span class="value">{{ humidity }} %</span>
         </div>
         <div>
           <span class="label">Last Data:</span>
-          <span class="timestamp">2025-04-08 12:12:58</span>
+          <span class="timestamp">{{ timestamp }}</span>
         </div>
       </div>
     </div>
