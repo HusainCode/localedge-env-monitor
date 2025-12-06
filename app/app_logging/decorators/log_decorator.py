@@ -54,51 +54,50 @@ class LogDecorator:
         # Allow debug mode. Its TRUE as of now. False for production level for cleaner logs
         self.debug_enabled = debug_enabled
 
-    @staticmethod
-
     def start_timer(self):
         return time.time()  # Timer to track execution time
 
-    @staticmethod
     def end_timer(self, start_time):
-        return (time.time() - self.start_timer) * 1000  # milliseconds (1 ms = 0.001 seconds)
+        return (time.time() - start_time) * 1000  # milliseconds (1 ms = 0.001 seconds)
 
+    def log_this(self, func=None, level=logging.INFO) -> Callable:  # the parameter is the function you're going to decorate
+        """
+        Decorator factory: accepts a log level (default is INFO).
+        Returns the actual decorator that wraps the targeted function.
+        """
 
-def log_this(self, func, level=logging.info) -> Callable:  # the parameter is the function you're going to decorate
-    """
-    Decorator factory: accepts a log level (default is INFO).
-    Returns the actual decorator that wraps the targeted function.
-    """
+        def decorator(func):
+            @functools.wraps(func)
+            def wrapper(*args, **kwargs):
+                func_name = func.__name__  # stores the function name for cleaner code
 
-    def decorator(func):
-        @functools.wraps(func)
-        def wrapper(*args, **kwargs):
-            func_name = func.__name__  # stores the function name for cleaner code
+                # If debug mode is True
+                if self.debug_enabled:
+                    self.logger.debug(f"Entering {func_name} with args={args} , kwargs={kwargs}")
+                else:  # Use the stander log message
+                    self.logger.info(f"Calling: {func_name}")
 
-            # If debug mode is True
-            if self.debug_enabled:
-                self.logger.debug(f"Entering {func_name} with args={args} , kwargs={kwargs}")
-            else:  # Use the stander log message
-                self.logger.info(f"Calling: {func_name}")
+                start = self.start_timer()
 
-            start = self.start_timer()
+                try:
+                    result = func(*args, **kwargs)
+                    duration_in_milliseconds = self.end_timer(start)
 
-            try:
-                result = func(*args, **kwargs)
-                duration_in_milliseconds = self.end_timer(start)
+                    self.logger.log(level, f"{func_name} was completed in {duration_in_milliseconds:.2f}ms")
 
-                self.logging.log(level, f"{func_name} was completed in {duration_in_milliseconds:.2f}ms")
+                    return result
 
-                return result
+                except Exception as e:
+                    duration_in_milliseconds = self.end_timer(start)
+                    self.logger.error(f"{func_name} failed with error {e} after {duration_in_milliseconds:.2f}ms",
+                                      exc_info=True)  # exc_info=True is key for debugging.
+                                                      # shows exactly where the error happened
+                                                      # tells the logger to include the full traceback in the log
+                    raise
 
-            except Exception as e:
-                duration_in_milliseconds = self.end_timer(start)
-                self.logger.error(f"{func_name} failed with error {e} after {duration_in_milliseconds:.2f}ms",
-                                  exc_info=True)  # exc_info=True is key for debugging.
-                                                  # shows exactly where the error happened
-                                                  # tells the logger to include the full traceback in the log
-                raise
+            return wrapper
 
-        return wrapper
-
-    return decorator
+        if func is None:
+            return decorator
+        else:
+            return decorator(func)

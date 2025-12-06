@@ -2,100 +2,340 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Retro Dashbirds</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Environment Monitor | Real-time Dashboard</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
   <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
     body {
-      background-color: #1c1c1c;
-      font-family: 'Courier New', Courier, monospace;
-      color: #f0f0f0;
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #e8e8e8;
+      min-height: 100vh;
       padding: 2rem;
+      overflow-x: hidden;
     }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 3rem;
+      animation: fadeInDown 0.8s ease-out;
+    }
+
+    .header h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      background: linear-gradient(45deg, #00d4ff, #00ff88);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.5rem;
+      text-shadow: 0 0 30px rgba(0, 212, 255, 0.3);
+    }
+
+    .header p {
+      color: #a8a8a8;
+      font-size: 1rem;
+    }
+
     .dashboards {
-      display: flex;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
       gap: 2rem;
+      animation: fadeInUp 0.8s ease-out 0.2s both;
     }
+
     .window {
-      background-color: #2e2e2e;
-      border: 2px solid #555;
-      border-radius: 8px;
-      width: 300px;
-      padding: 1rem;
-      box-shadow: 4px 4px 0 #000;
+      background: rgba(30, 30, 46, 0.7);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
     }
+
+    .window::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, transparent, var(--accent-color), transparent);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .window:hover::before {
+      opacity: 1;
+    }
+
+    .window:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 12px 48px rgba(0, 0, 0, 0.4);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .window.temperature {
+      --accent-color: #ff6b6b;
+    }
+
+    .window.humidity {
+      --accent-color: #4dabf7;
+    }
+
     .title-bar {
-      background-color: #444;
-      color: #fff;
-      font-weight: bold;
-      padding: 0.5rem;
-      border-bottom: 2px solid #666;
-      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      margin-bottom: 1.5rem;
     }
+
+    .title-bar h2 {
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: var(--accent-color);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .icon {
+      width: 24px;
+      height: 24px;
+      display: inline-block;
+    }
+
     .status {
       display: flex;
       align-items: center;
-      margin-bottom: 1rem;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+      padding: 0.75rem;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 8px;
     }
+
     .indicator {
-      width: 12px;
-      height: 12px;
+      width: 16px;
+      height: 16px;
       border-radius: 50%;
+      position: relative;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    .indicator.on {
+      background-color: #00ff88;
+      box-shadow: 0 0 12px rgba(0, 255, 136, 0.6);
+    }
+
+    .indicator.off {
+      background-color: #ff4757;
+      box-shadow: 0 0 12px rgba(255, 71, 87, 0.6);
+      animation: none;
+    }
+
+    .status-text {
+      font-size: 0.9rem;
+      color: #a8a8a8;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .metric-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .metric-label {
+      display: block;
+      font-size: 0.85rem;
+      color: #888;
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .metric-value {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--accent-color);
+      font-family: 'Courier New', monospace;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .timestamp-wrapper {
+      margin-top: 1.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .timestamp {
+      display: block;
+      font-size: 0.85rem;
+      color: #666;
+      font-family: 'Courier New', monospace;
+    }
+
+    .refresh-indicator {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #00ff88;
       margin-right: 0.5rem;
+      animation: blink 1.5s ease-in-out infinite;
     }
-    .on {
-      background-color: #00ff00;
+
+    @keyframes pulse {
+      0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+      50% {
+        transform: scale(1.2);
+        opacity: 0.7;
+      }
     }
-    .off {
-      background-color: #ff0000;
+
+    @keyframes blink {
+      0%, 100% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0.2;
+      }
     }
-    .label {
-      font-weight: bold;
+
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
-    .timestamp, .value {
-      font-family: monospace;
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 1rem;
+      }
+
+      .header h1 {
+        font-size: 2rem;
+      }
+
+      .dashboards {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+
+      .metric-value {
+        font-size: 2rem;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="dashboards">
-    <div class="window">
-      <div class="title-bar">Temperature</div>
-      <div class="content">
-        <div class="status">
-          <div class="indicator on"></div>
-          <span class="label">Status:</span> ON
+  <div class="container">
+    <header class="header">
+      <h1>Environment Monitor</h1>
+      <p>Real-time environmental data tracking</p>
+    </header>
+
+    <div class="dashboards">
+      <div class="window temperature">
+        <div class="title-bar">
+          <h2>
+            <span class="icon">🌡️</span>
+            Temperature
+          </h2>
         </div>
-        <div>
-          <span class="label">Value:</span>
-          <span class="value">{{ temperature }} °C</span>
-        </div>
-        <div>
-          <span class="label">Last Data:</span>
-          <span class="timestamp">{{ timestamp }}</span>
+        <div class="content">
+          <div class="status">
+            <div class="indicator on"></div>
+            <span class="status-text">Online</span>
+          </div>
+          <div class="metric-group">
+            <span class="metric-label">Current Reading</span>
+            <div class="metric-value">{{ temperature }}°C</div>
+          </div>
+          <div class="timestamp-wrapper">
+            <span class="metric-label">Last Updated</span>
+            <span class="timestamp">
+              <span class="refresh-indicator"></span>{{ timestamp }}
+            </span>
+          </div>
         </div>
       </div>
-    </div>
 
-    <div class="window">
-      <div class="title-bar">Humidity</div>
-      <div class="content">
-        <div class="status">
-          <div class="indicator on"></div>
-          <span class="label">Status:</span> ON
+      <div class="window humidity">
+        <div class="title-bar">
+          <h2>
+            <span class="icon">💧</span>
+            Humidity
+          </h2>
         </div>
-        <div>
-          <span class="label">Value:</span>
-          <span class="value">{{ humidity }} %</span>
-        </div>
-        <div>
-          <span class="label">Last Data:</span>
-          <span class="timestamp">{{ timestamp }}</span>
+        <div class="content">
+          <div class="status">
+            <div class="indicator on"></div>
+            <span class="status-text">Online</span>
+          </div>
+          <div class="metric-group">
+            <span class="metric-label">Current Reading</span>
+            <div class="metric-value">{{ humidity }}%</div>
+          </div>
+          <div class="timestamp-wrapper">
+            <span class="metric-label">Last Updated</span>
+            <span class="timestamp">
+              <span class="refresh-indicator"></span>{{ timestamp }}
+            </span>
+          </div>
         </div>
       </div>
     </div>
   </div>
+
+  <script>
+    // Auto-refresh page every 30 seconds to get updated data
+    setTimeout(() => {
+      location.reload();
+    }, 30000);
+
+    // Add subtle animation on load
+    document.addEventListener('DOMContentLoaded', () => {
+      const windows = document.querySelectorAll('.window');
+      windows.forEach((window, index) => {
+        window.style.animationDelay = `${index * 0.1}s`;
+      });
+    });
+  </script>
 </body>
 </html>
